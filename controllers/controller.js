@@ -8,7 +8,7 @@ function submitCourse() {
     //Get errors
     let errorCourse = document.getElementById("errorCourse");
     let errorDescription = document.getElementById("errorDescription");
-    if (courseInput.value.length > 15 || !/^[A-Za-z\s]+$/.test(courseInput.value)) {
+    if (courseInput.value.length > 15 || !/^[A-Za-zñÑ\s]+$/.test(courseInput.value)) {
         errores++;
         courseInput.classList.add("is-invalid");
         errorCourse.style.display = "block";
@@ -18,7 +18,7 @@ function submitCourse() {
         courseInput.classList.remove("is-invalid");
         errorCourse.style.display = "none";
     }
-    if (descriptionInput.value.length > 50 || !/^[A-Za-z\s]+$/.test(descriptionInput.value)) {
+    if (descriptionInput.value.length > 50 || !/^[A-Za-zñÑ\s]+$/.test(descriptionInput.value)) {
         errores++;
         descriptionInput.classList.add("is-invalid");
         errorDescription.style.display = "block";
@@ -73,18 +73,25 @@ function submitStudentForm() {
                 errores++;
                 idInput.classList.add("is-invalid");
                 errorId.style.display = "block";
-                errorId.textContent = "Required, enter a valid ID";
+                errorId.textContent = "Enter a valid ID";
             }
             else {
                 studentsIds.add(id);
                 idInput.classList.remove("is-invalid");
             }
             //validar BD
-            if (!birthDate) {
-                errores++;
-                birthDateInput.classList.add("is-invalid");
-                errorBD.style.display = "block";
-                errorBD.textContent = "Required";
+            if (birthDate) {
+                const birthDateValue = new Date(birthDate);
+                const currentDate = new Date();
+                if (birthDateValue > currentDate) {
+                    errores++;
+                    birthDateInput.classList.add("is-invalid");
+                    errorBD.style.display = "block";
+                    errorBD.textContent = "Birth Date cannot be in the future.";
+                }
+                else {
+                    birthDateInput.classList.remove("is-invalid");
+                }
             }
             //si no hay errores...
             if (!errores) {

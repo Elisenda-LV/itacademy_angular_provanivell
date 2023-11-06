@@ -9,7 +9,7 @@ function submitCourse() {
     let errorCourse = <HTMLInputElement>document.getElementById("errorCourse");
 	let errorDescription = <HTMLInputElement>document.getElementById("errorDescription");
 
-    if (courseInput.value.length > 15 || !/^[A-Za-z\s]+$/.test(courseInput.value)) {
+    if (courseInput.value.length > 15 || !/^[A-Za-zñÑ\s]+$/.test(courseInput.value)) {
         errores++;
         courseInput.classList.add("is-invalid");
         errorCourse.style.display = "block";
@@ -19,7 +19,7 @@ function submitCourse() {
         errorCourse.style.display = "none";
     }
 
-    if (descriptionInput.value.length > 50 || !/^[A-Za-z\s]+$/.test(descriptionInput.value)) {
+    if (descriptionInput.value.length > 50 || !/^[A-Za-zñÑ\s]+$/.test(descriptionInput.value)) {
         errores++;
         descriptionInput.classList.add("is-invalid");
         errorDescription.style.display = "block";
@@ -61,49 +61,56 @@ function submitStudentForm() {
         let errorId = <HTMLInputElement>document.getElementById("errorId" + i);
         let errorBD = <HTMLInputElement>document.getElementById("errorBD" + i);
 
-            if (nameInput && idInput && birthDateInput) {
+        if (nameInput && idInput && birthDateInput) {
        
-                const name = nameInput.value;
-                const id = idInput.value; 
-                const birthDate = birthDateInput.value; 
+            const name = nameInput.value;
+            const id = idInput.value; 
+            const birthDate = birthDateInput.value; 
             
-                //validar name
-                if (nameInput.value.length > 15 || !/^[A-Za-z\s]+$/.test(nameInput.value)) {
-                    errores++;
-                    nameInput.classList.add("is-invalid");
-                    errorName.style.display = "block";
-                    errorName.textContent = "Required. Course name should contain only letters and be less than 15 characters.";
-                } else {
+            //validar name
+            if (nameInput.value.length > 15 || !/^[A-Za-z\s]+$/.test(nameInput.value)) {
+                errores++;
+                nameInput.classList.add("is-invalid");
+                errorName.style.display = "block";
+                errorName.textContent = "Required. Course name should contain only letters and be less than 15 characters.";
+            } else {
                 nameInput.classList.remove("is-invalid");
                 errorName.style.display = "none";
-                }
-            
-                //validar que no se dupliquen los ids
-                if (studentsIds.has(id)) {
-                    errores++;
-                    idInput.classList.add("is-invalid");
-                    errorId.style.display = "block";
-                    errorId.textContent = "Required, enter a valid ID";
-                } else {
-                    studentsIds.add(id);
-                    idInput.classList.remove("is-invalid");
-                }
-            
-                //validar BD
-                if (!birthDate) {
-                    errores++;
-                    birthDateInput.classList.add("is-invalid");
-                    errorBD.style.display = "block";
-                    errorBD.textContent = "Required";
-                } 
-            
-                 //si no hay errores...
-                if (!errores){
-                    const studentGenerica = new Student(name, id, birthDate);
-                    course.addStudent(studentGenerica);
-                
-                }
             }
+            
+            //validar que no se dupliquen los ids
+            if (studentsIds.has(id)) {
+                errores++;
+                idInput.classList.add("is-invalid");
+                errorId.style.display = "block";
+                errorId.textContent = "Enter a valid ID";
+            } else {
+                studentsIds.add(id);
+                idInput.classList.remove("is-invalid");
+            }
+            
+            //validar BD
+            if (birthDate) {
+                const birthDateValue = new Date(birthDate);
+                const currentDate = new Date();
+                    
+                if(birthDateValue > currentDate){
+                errores++;
+                birthDateInput.classList.add("is-invalid");
+                errorBD.style.display = "block";
+                errorBD.textContent = "Birth Date cannot be in the future.";
+                }else{
+                    birthDateInput.classList.remove("is-invalid");
+                } 
+            }
+            
+            //si no hay errores...
+            if (!errores){
+                const studentGenerica = new Student(name, id, birthDate);
+                course.addStudent(studentGenerica);
+                
+            }
+        }
     }
     
     if (errores === 0) {
@@ -121,7 +128,8 @@ function showStudents() {
     
     studentTitle.innerHTML = "<b>STUDENTS</b>";
     studentOutput1.innerHTML = "<b>Student 1:</b><br>  " + "ID: " + course.students[0].id + "  <br>Name: " + course.students[0].name + "  <br>Birth Date: " + course.students[0].birthDate;
-    studentOutput2.innerHTML = "<b>Student 2:</b><br>  " + "ID: " + course.students[1].id + "  <br>Name: " + course.students[1].name + "  <br>Birth Date: " + course.students[1].birthDate;
+    studentOutput2.innerHTML = "<b>Student 2:</b><br>  " + "ID: " + course.students[1].id + "  <br>Name: " + course.students[1].name + "  <br>Birth Date: " + course.students[1].birthDate; 
+ 
 }
 
 
